@@ -230,6 +230,49 @@ install.tools: .install.gitvalidation .install.gometalinter .install.md2man
 		make all install; \
 	fi
 
+.PHONY: testinfra.check testinfra.push testinfra
+
+testinfra.check:
+	if [ -z $$GOOGLE_APPLICATION_CREDENTIALS ]; then \
+		echo "GOOGLE_APPLICATION_CREDENTIALS not set while required"; \
+		exit 1; \
+	fi
+	if [ -z $$GCE_PROJECT ]; then \
+		echo "GCE_PROJECT not set while required"; \
+		exit 1; \
+	fi
+
+testinfra.push:
+	if [ -z $$GCE_BUCKET ]; then \
+		echo "GCE_BUCKET not set while required"; \
+		exit 1; \
+	fi
+	echo "GENERATE THE TAR BEFORE!! THIS IS TOOODOOOOOH"
+	gsutil mb "gs://${GCE_BUCKET}" # TODO(fntlnz): add a ttl and make the bucket public
+	gsutil cp ${crio_tar} "gs://${GCE_BUCKET}/"
+
+testinfra.build:
+	gcloud auth activate-service-account --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" --project="${GCE_PROJECT}"; \
+	sh -c "echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list"; \
+	apt-get update; \
+	apt-get -y upgrade; \
+	apt-get install -y btrfs-tools; \
+	apt-get install -y git; \
+	apt-get install -y golang-go; \
+	apt-get install -y libassuan-dev; \
+	apt-get install -y libdevmapper-dev; \
+	apt-get install -y libglib2.0-dev; \
+	apt-get install -y libc6-dev; \
+	apt-get install -y libgpgme11-dev; \
+	apt-get install -y libgpg-error-dev; \
+	apt-get install -y libseccomp-dev; \
+	apt-get install -y libselinux1-dev; \
+	apt-get install -y pkg-config; \
+	apt-get install -y runc \
+	apt-get install -y skopeo-containers
+
+testinfra: testinfra.check install.tools testinfra.build testinfra.push
+
 .PHONY: \
 	binaries \
 	clean \
