@@ -237,9 +237,8 @@ testinfra.push:
 		echo "GCE_BUCKET not set while required"; \
 		exit 1; \
 	fi
-	crio_tar=crio-$(GIT_COMMIT).tar.gz
-	tar -cvzf bin/crio bin/conmon bin/pause bin/kpod bin/crioctl ${crio_tar}
-	gsutil cp ${crio_tar} "gs://${GCE_BUCKET}/"
+	tar -cvzf bin/crio bin/conmon bin/pause bin/kpod bin/crioctl crio-$(GIT_COMMIT).tar.gz
+	gsutil cp crio-$(GIT_COMMIT).tar.gz "gs://${GCE_BUCKET}/"
 
 testinfra.prepare:
 	if [ -z $$GOOGLE_APPLICATION_CREDENTIALS ]; then \
