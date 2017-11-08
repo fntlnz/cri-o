@@ -238,7 +238,7 @@ testinfra.push:
 		exit 1; \
 	fi
 	crio_tar=crio-$(GIT_COMMIT).tar.gz
-	tar -cvzf crio conmon pause kpod crioctl ${crio_tar}
+	tar -cvzf bin/crio bin/conmon bin/pause bin/kpod bin/crioctl ${crio_tar}
 	gsutil cp ${crio_tar} "gs://${GCE_BUCKET}/"
 
 testinfra.prepare:
