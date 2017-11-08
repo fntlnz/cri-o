@@ -230,9 +230,18 @@ install.tools: .install.gitvalidation .install.gometalinter .install.md2man
 		make all install; \
 	fi
 
-.PHONY: testinfra.check testinfra.push testinfra
+.PHONY: testinfra.push testinfra.prepare testinfra
 
-testinfra.check:
+testinfra.push:
+	if [ -z $$GCE_BUCKET ]; then \
+		echo "GCE_BUCKET not set while required"; \
+		exit 1; \
+	fi
+	crio_tar=crio-$(GIT_COMMIT).tar.gz
+	tar -cvzf crio conmon pause kpod crioctl ${crio_tar}
+	gsutil cp ${crio_tar} "gs://${GCE_BUCKET}/"
+
+testinfra.prepare:
 	if [ -z $$GOOGLE_APPLICATION_CREDENTIALS ]; then \
 		echo "GOOGLE_APPLICATION_CREDENTIALS not set while required"; \
 		exit 1; \
@@ -241,17 +250,6 @@ testinfra.check:
 		echo "GCE_PROJECT not set while required"; \
 		exit 1; \
 	fi
-
-testinfra.push:
-	if [ -z $$GCE_BUCKET ]; then \
-		echo "GCE_BUCKET not set while required"; \
-		exit 1; \
-	fi
-	echo "GENERATE THE TAR BEFORE!! THIS IS TOOODOOOOOH"
-	gsutil mb "gs://${GCE_BUCKET}" # TODO(fntlnz): add a ttl and make the bucket public
-	gsutil cp ${crio_tar} "gs://${GCE_BUCKET}/"
-
-testinfra.build:
 	gcloud auth activate-service-account --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" --project="${GCE_PROJECT}"; \
 	sh -c "echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list"; \
 	apt-get update; \
@@ -271,7 +269,7 @@ testinfra.build:
 	apt-get install -y runc \
 	apt-get install -y skopeo-containers
 
-testinfra: testinfra.check install.tools testinfra.build testinfra.push
+testinfra: install.tools testinfra.prepare binaries testinfra.push
 
 .PHONY: \
 	binaries \
