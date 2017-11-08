@@ -250,24 +250,24 @@ testinfra.prepare:
 		echo "GCE_PROJECT not set while required"; \
 		exit 1; \
 	fi
-	gcloud auth activate-service-account --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" --project="${GCE_PROJECT}"; \
-	sh -c "echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list"; \
-	apt-get update; \
-	apt-get -y upgrade; \
-	apt-get install -y btrfs-tools; \
-	apt-get install -y git; \
-	apt-get install -y golang-go; \
-	apt-get install -y libassuan-dev; \
-	apt-get install -y libdevmapper-dev; \
-	apt-get install -y libglib2.0-dev; \
-	apt-get install -y libc6-dev; \
-	apt-get install -y libgpgme11-dev; \
-	apt-get install -y libgpg-error-dev; \
-	apt-get install -y libseccomp-dev; \
-	apt-get install -y libselinux1-dev; \
-	apt-get install -y pkg-config; \
-	apt-get install -y runc \
-	apt-get install -y skopeo-containers
+	gcloud auth activate-service-account --key-file "${GOOGLE_APPLICATION_CREDENTIALS}" --project="${GCE_PROJECT}";
+	sh -c "echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list";
+	apt-get update;
+	apt-get -y upgrade;
+	apt-get install -y btrfs-tools;
+	apt-get install -y git;
+	apt-get install -y golang-go;
+	apt-get install -y libassuan-dev;
+	apt-get install -y libdevmapper-dev;
+	apt-get install -y libglib2.0-dev;
+	apt-get install -y libc6-dev;
+	apt-get install -y libgpgme11-dev;
+	apt-get install -y libgpg-error-dev;
+	apt-get install -y libseccomp-dev;
+	apt-get install -y libselinux1-dev;
+	apt-get install -y pkg-config;
+	apt-get install -y runc;
+	apt-get install -y skopeo-containers;
 
 testinfra: install.tools testinfra.prepare binaries testinfra.push
 
