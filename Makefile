@@ -237,6 +237,7 @@ testinfra.push:
 		echo "GCE_BUCKET not set while required"; \
 		exit 1; \
 	fi
+	gsutil mb "gs://${GCE_BUCKET}/" #todo(fntlnz): define a retention policy and visibility public
 	tar -cvzf bin/crio bin/conmon bin/pause bin/kpod bin/crioctl crio-$(GIT_COMMIT).tar.gz
 	gsutil cp crio-$(GIT_COMMIT).tar.gz "gs://${GCE_BUCKET}/"
 
