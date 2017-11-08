@@ -267,7 +267,7 @@ testinfra.prepare:
 	apt-get install -y libselinux1-dev;
 	apt-get install -y pkg-config;
 	apt-get install -y runc;
-	apt-get install -y skopeo-containers;
+	# apt-get install -y skopeo-containers;
 
 testinfra: install.tools testinfra.prepare binaries testinfra.push
 
